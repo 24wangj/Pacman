@@ -15,7 +15,7 @@ import code.AnimationPanel;
 
 public class PacmanRunner {
 
-    int FPS = 63;   //Frames per second (animation speed)
+    int FPS = 60;   //Frames per second (animation speed)
     AnimationPanel world = new PacmanGame();
     
     

@@ -29,7 +29,7 @@ public class PacmanGame extends AnimationPanel {
 	private int gameState;
 	private int score;
 	private int highScore;
-	private String[][] keyboard =
+	private final String[][] keyboard =
 		{
 			{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"},
 			{"K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"},
@@ -45,7 +45,6 @@ public class PacmanGame extends AnimationPanel {
 	private ArrayList<Coin> coins;
 	private ArrayList<PowerCoin> powerCoins;
 	private ArrayList<Wall> walls;
-	private Fruit fruit;
 	private Map map;
 	private Resources resources;
 	
@@ -148,7 +147,7 @@ public class PacmanGame extends AnimationPanel {
 		ghosts = new ArrayList<>();
 		coins = new ArrayList<>();
 		powerCoins = new ArrayList<>();
-		fruit = new Fruit();
+		Fruit fruit = new Fruit();
 		walls = new ArrayList<>();
 		pacman.setNextDirection(Pacman.LEFT);
 		ghosts.add(new Ghost(Ghost.RED));
@@ -327,7 +326,7 @@ public class PacmanGame extends AnimationPanel {
 	protected void renderFrame(Graphics g) {
 		
 		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, WIDTH, HEIGHT);
+		g.fillRect(0, 0, WIDTH + 20, HEIGHT + 20);
 		
 		g.setFont(Resources.FONT_ARCADE);
 		
@@ -631,7 +630,7 @@ public class PacmanGame extends AnimationPanel {
 					coins.remove(i);
 					score += 10;
 					i--;
-					if (coins.size() == 0 && powerCoins.size() == 0) {
+					if (coins.isEmpty() && powerCoins.isEmpty()) {
 						pacman.setFrozen(true);
 						for (Ghost ghost : ghosts)
 							ghost.setFrozen(true);
@@ -651,7 +650,7 @@ public class PacmanGame extends AnimationPanel {
 					for (Ghost ghost : ghosts)
 						ghost.setFlash(false);
 					i--;
-					if (coins.size() == 0 && powerCoins.size() == 0) {
+					if (coins.isEmpty() && powerCoins.isEmpty()) {
 						pacman.setFrozen(true);
 						for (Ghost ghost : ghosts)
 							ghost.setFrozen(true);
@@ -754,9 +753,8 @@ public class PacmanGame extends AnimationPanel {
 							return;
 						}
 					}
-					else
-						if (frameNumber % 6 == 0)
-							pacman.animateDeath();
+					else if (frameNumber % 6 == 0)
+						pacman.animateDeath();
 					pacmanDeathTimer++;
 				}
 				
@@ -796,8 +794,10 @@ public class PacmanGame extends AnimationPanel {
 				
 				boolean ghostDead = false;
 				for (Ghost ghost : ghosts)
-					if (ghost.getDead())
-						ghostDead = true;
+                    if (ghost.getDead()) {
+                        ghostDead = true;
+                        break;
+                    }
 				
 				if (ghostDead) {
 					Resources.GHOST_MOVE.stop();
@@ -976,7 +976,7 @@ public class PacmanGame extends AnimationPanel {
 								gh.setFrozen(true);
 							pacman.setFrozen(true);
 							pacman.setVisible(false);
-							score += 100 * Math.pow(2, ghostsEaten);
+							score += (int) (100 * Math.pow(2, ghostsEaten));
 						} else if (!ghost.getDead() && !pacman.getDead()) {
 							for (Ghost gh : ghosts)
 								gh.setFrozen(true);
@@ -1324,12 +1324,12 @@ public class PacmanGame extends AnimationPanel {
 				resetMode();
 				break;
 			case KeyEvent.VK_BACK_SPACE:
-				if (initials.length() > 0)
+				if (!initials.isEmpty())
 					initials = initials.substring(0, initials.length() - 1);
 				break;
 			case KeyEvent.VK_SPACE:
 				if (keyboard[letterRow][letterCol].equals("DEL")) {
-					if (initials.length() > 0)
+					if (!initials.isEmpty())
 						initials = initials.substring(0, initials.length() - 1);
 				} else if (keyboard[letterRow][letterCol].equals("END")) {
 					if (initials.length() > 2) {
